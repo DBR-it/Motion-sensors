@@ -1,0 +1,111 @@
+# ===========================================
+# ESPHome Motion Sensor Configuration
+# ===========================================
+# This configuration is for an ESP8266 device with multiple
+# GPIO-based motion sensors (RCWL-0516). It provides:
+#  - Motion detection via GPIO binary sensors
+#  - Integration with Home Assistant
+#  - OTA firmware updates
+#  - A web server on port 80 for local access
+#
+# Users can set custom names for each motion sensor and
+# adjust the fallback AP credentials.
+
+# -------------------------------------------------
+# Substitutions: variables that make the file easier
+# to customize by allowing changes in one place.
+# -------------------------------------------------
+substitutions:
+  device_name: "motion_sensor"                       # Main name for the ESPHome device
+  fallback_ssid: "Motion Fallback Hotspot"           # SSID for fallback AP
+  fallback_password: "0SKxfuehi29G"                  # Password for fallback AP
+  ota_password: "47c45114ed4bed32e4832967697cd6446"  # OTA password
+  wifi_ssid_var: !secret wifi_ssid                   # Primary Wi-Fi SSID
+  wifi_password_var: !secret wifi_password           # Primary Wi-Fi Password
+  sensor_name_v1: "NodeMCU V1 Motion Sensor"         # Name for Motion Sensor V1
+  sensor_name_v2: "NodeMCU V2 Motion Sensor"         # Name for Motion Sensor V2
+  sensor_name_v3: "NodeMCU V3 Motion Sensor"         # Name for Motion Sensor V3
+  sensor_name_v4: "NodeMCU V4 Motion Sensor"         # Name for Motion Sensor V4
+
+esphome:
+  name: ${device_name}
+
+esp8266:
+  board: d1_mini
+
+# -------------------------------------------------
+# Logger: Enables logs from the device.
+# -------------------------------------------------
+logger:
+#  level: INFO  # Change to DEBUG if troubleshooting
+
+# -------------------------------------------------
+# Home Assistant API: Allows integration with HA.
+# -------------------------------------------------
+api:
+
+# -------------------------------------------------
+# OTA: Over-The-Air updates with a password.
+# -------------------------------------------------
+ota:
+  - platform: esphome
+    password: "${ota_password}"
+
+# -------------------------------------------------
+# Web Server: For debugging and local control.
+# -------------------------------------------------
+web_server:
+  port: 80
+
+# -------------------------------------------------
+# Wi-Fi Configuration: Connects the device to
+# your Wi-Fi network. Fallback hotspot included.
+# -------------------------------------------------
+wifi:
+  ssid: "${wifi_ssid_var}"
+  password: "${wifi_password_var}"
+  fast_connect: true  # Faster WiFi connection
+  reboot_timeout: 15min  # Reboots ESP if disconnected too long
+  ap:
+    ssid: "${fallback_ssid}"
+    password: "${fallback_password}"
+
+captive_portal:
+
+# -------------------------------------------------
+# Binary Sensors: GPIO-based motion sensors with
+# delayed_off to prevent flickering.
+# -------------------------------------------------
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO1
+    name: "${sensor_name_v4}"
+    device_class: motion
+    filters:
+      - delayed_off: 2s
+
+  - platform: gpio
+    pin:
+      number: D2
+    name: "${sensor_name_v3}"
+    device_class: motion
+    filters:
+      - delayed_off: 2s
+
+  - platform: gpio
+    pin:
+      number: D1
+    name: "${sensor_name_v2}"
+    device_class: motion
+    filters:
+      - delayed_off: 2s
+
+  - platform: gpio
+    pin:
+      number: D6
+      mode: INPUT_PULLUP
+    name: "${sensor_name_v1}"
+    device_class: motion
+    filters:
+      - delayed_off: 2s
