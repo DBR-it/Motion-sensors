@@ -9,11 +9,11 @@ esphome:
   name: ${device_name}
 
 packages:
-  motion_sensor:
+  remote_package_files:
     url: https://github.com/DBR-it/Motion-sensors
+    files: [motion_sensor.yaml]
     ref: main
-    files:
-      - motion_sensor.yaml
+    refresh: 1d
 ```
 
 ### How It Works
@@ -40,11 +40,11 @@ esphome:
   name: ${device_name}
 
 packages:
-  motion_sensor:
+  remote_package_files:
     url: https://github.com/DBR-it/Motion-sensors
+    files: [motion_sensor.yaml]
     ref: main
-    files:
-      - motion_sensor.yaml
+    refresh: 1d
 
 substitutions:
   device_name: "my_custom_motion_sensor"
